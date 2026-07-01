@@ -127,8 +127,8 @@ export default function HowItWorks() {
           </div>
 
           {/* Code */}
-          <div className="overflow-x-auto p-4 sm:p-5">
-            <pre className="font-mono text-[13px] leading-relaxed">
+          <div className="overflow-x-auto p-3 sm:p-5">
+            <pre className="font-mono text-[11px] leading-relaxed sm:text-[13px]">
               <code>
                 {codeExample.split("\n").map((line, i) => (
                   <div key={i} className="whitespace-nowrap transition-opacity hover:opacity-90">

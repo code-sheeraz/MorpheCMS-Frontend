@@ -113,8 +113,8 @@ export default function Hero() {
             </div>
 
             {/* Code area */}
-            <div className="overflow-x-auto p-4 sm:p-5">
-              <pre className="font-mono text-[13px] leading-relaxed">
+            <div className="overflow-x-auto p-3 sm:p-5">
+              <pre className="font-mono text-[11px] leading-relaxed sm:text-[13px]">
                 <code>
                   {codeLines.map((line, i) => {
                     const segments = splitHighlight(line);

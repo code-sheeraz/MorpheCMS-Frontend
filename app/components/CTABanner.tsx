@@ -2,7 +2,7 @@ import AnimatedSection from "./AnimatedSection";
 
 export default function CTABanner() {
   return (
-    <section className="relative overflow-hidden bg-accent py-20 transition-colors duration-300 lg:py-28">
+    <section className="relative overflow-hidden bg-accent py-16 transition-colors duration-300 sm:py-20 lg:py-28">
       {/* Noise overlay */}
       <div className="noise-overlay pointer-events-none absolute inset-0" />
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useTheme } from "./ThemeProvider";
 
 const navLinks = [
@@ -21,6 +21,20 @@ export default function Navbar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  const close = useCallback(() => setOpen(false), []);
 
   return (
     <header
@@ -45,12 +59,11 @@ export default function Navbar() {
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-8 md:flex">
-          {navLinks.map((link, i) => (
+          {navLinks.map((link) => (
             <a
               key={link.label}
               href={link.href}
               className="relative text-sm font-medium text-text-muted transition-colors hover:text-text after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-accent after:transition-all after:duration-300 hover:after:w-full"
-              style={{ animationDelay: `${i * 50}ms` }}
             >
               {link.label}
             </a>
@@ -59,7 +72,6 @@ export default function Navbar() {
 
         {/* Desktop CTAs */}
         <div className="hidden items-center gap-3 md:flex">
-          {/* Theme toggle */}
           <button
             type="button"
             onClick={toggle}
@@ -113,48 +125,75 @@ export default function Navbar() {
           </button>
           <button
             type="button"
-            className="flex items-center justify-center"
+            className="relative flex h-9 w-9 items-center justify-center"
             onClick={() => setOpen(!open)}
             aria-label={open ? "Close menu" : "Open menu"}
           >
-            {open ? (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-text">
-                <path d="M18 6L6 18M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-text">
-                <path d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            )}
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 22 22"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              className="text-text"
+            >
+              <path
+                d={open ? "M6 6l10 10M16 6L6 16" : "M4 6h14M4 11h14M4 16h14"}
+                className="transition-all duration-300"
+              />
+            </svg>
           </button>
         </div>
       </div>
 
+      {/* Mobile backdrop */}
+      <div
+        className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
+          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={close}
+        aria-hidden="true"
+      />
+
       {/* Mobile panel */}
-      {open && (
-        <div className="animate-fade-in-down border-t border-border bg-primary px-4 pb-6 pt-4 md:hidden">
-          <nav className="mb-4 flex flex-col gap-3">
+      <div
+        className={`absolute left-0 right-0 z-50 border-b border-border bg-primary transition-all duration-300 ease-out overflow-hidden md:hidden ${
+          open ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="px-4 pb-6 pt-4">
+          <nav className="mb-4 flex flex-col gap-1">
             {navLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                className="text-sm font-medium text-text-muted transition-colors hover:text-text"
-                onClick={() => setOpen(false)}
+                className="rounded-md px-3 py-2.5 text-sm font-medium text-text-muted transition-colors hover:bg-surface-2 hover:text-text"
+                onClick={close}
               >
                 {link.label}
               </a>
             ))}
           </nav>
-          <div className="flex flex-col gap-2">
-            <a href="#" className="rounded-md px-4 py-2 text-center text-sm font-medium text-text-muted transition-colors hover:text-text">
+          <div className="flex flex-col gap-2 border-t border-border pt-4">
+            <a
+              href="#"
+              className="rounded-md px-3 py-2.5 text-center text-sm font-medium text-text-muted transition-colors hover:bg-surface-2 hover:text-text"
+              onClick={close}
+            >
               Sign in
             </a>
-            <a href="#" className="rounded-md bg-accent px-4 py-2 text-center text-sm font-semibold text-white transition-all hover:shadow-[0_0_20px_rgba(233,69,96,0.4)]">
+            <a
+              href="#"
+              className="rounded-md bg-accent px-3 py-2.5 text-center text-sm font-semibold text-white transition-all hover:shadow-[0_0_20px_rgba(233,69,96,0.4)]"
+              onClick={close}
+            >
               Get started free
             </a>
           </div>
         </div>
-      )}
+      </div>
     </header>
   );
 }
